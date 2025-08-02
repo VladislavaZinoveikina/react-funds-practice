@@ -20,15 +20,22 @@ function App() {
   };
 
   // Receiving post from child component
-    const removePost = (post) => {
-      setPosts(posts.filter(p => p.id !== post.id));
+  const removePost = (post) => {
+    setPosts(posts.filter(p => p.id !== post.id));
   };
 
 
   return (
     <div className="App">
-      <PostForm create={createPost}/>
-      <PostList remove={removePost} posts={posts} title="Posts about JS" />
+      <PostForm create={createPost} />
+      {posts.length
+        ?
+        <PostList remove={removePost} posts={posts} title="Posts about JS" />
+        :
+        <h1 style={{ textAlign: 'center' }}>
+          Posts not found
+        </h1>
+      }
     </div>
   );
 }
