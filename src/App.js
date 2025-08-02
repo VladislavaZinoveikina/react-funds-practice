@@ -15,7 +15,18 @@ function App() {
     { id: 2, title: 'dd 2', body: 'ss' },
     { id: 3, title: 'bb 3', body: 'ee' },
   ]);
-  const [selectedFilter, setSelectedFilter] = useState('');
+  const [selectedSort, setSelectedSort] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  function getSortedPosts() {
+    console.log('FUNCTION SORTED POSTS WORKED');
+    if (selectedSort) {
+      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
+    }
+    return posts;
+  };
+
+  const sortedPosts = getSortedPosts();
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
@@ -26,30 +37,34 @@ function App() {
     setPosts(posts.filter(p => p.id !== post.id));
   };
 
-  const filterPosts = (filter) => {
-    setSelectedFilter(filter);
-    setPosts([...posts].sort((a, b) => a[filter].localeCompare(b[filter])));
+  const sortPosts = (sort) => {
+    setSelectedSort(sort);
   }
 
 
   return (
     <div className="App">
       <PostForm create={createPost} />
-      <hr style={{margin: '15px 0'}}/>
+      <hr style={{ margin: '15px 0' }} />
       <div>
+        <MyInput
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search for..."
+        />
         <MySelect
-          value={selectedFilter}
-          onChange={filterPosts}
+          value={selectedSort}
+          onChange={sortPosts}
           defaultValue="Filters"
           options={[
-            {value: 'title', name: 'Name'},
-            {value: 'body', name: 'Description'},
+            { value: 'title', name: 'Name' },
+            { value: 'body', name: 'Description' },
           ]}
         />
       </div>
       {posts.length
         ?
-        <PostList remove={removePost} posts={posts} title="Posts about JS" />
+        <PostList remove={removePost} posts={sortedPosts} title="Posts about JS" />
         :
         <h1 style={{ textAlign: 'center' }}>
           Posts not found
