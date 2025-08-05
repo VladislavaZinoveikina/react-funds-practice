@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import PostItem from "./PostItem";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const PostList = ({ posts, title, remove }) => {
     if (!posts.length) {
@@ -9,14 +10,30 @@ const PostList = ({ posts, title, remove }) => {
             </h1>
         )
     }
+
+
     return (
         <div>
             <h1 style={{ textAlign: 'center' }}>
                 {title}
             </h1>
-            {posts.map((post, index) =>
-                <PostItem remove={remove} number={index + 1} post={post} key={post.id} />
-            )}
+            <TransitionGroup>
+                {posts.map((post, index) => {
+                    const nodeRef = React.createRef();
+                    return (
+                        <CSSTransition
+                            key={post.id}
+                            nodeRef={nodeRef}
+                            timeout={500}
+                            classNames="post"
+                        >
+                            <div ref={nodeRef}>
+                                <PostItem remove={remove} number={index + 1} post={post} />
+                            </div>
+                        </CSSTransition>
+                    );
+                })}
+            </TransitionGroup>
         </div>
     );
 };
