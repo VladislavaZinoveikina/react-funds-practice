@@ -18,6 +18,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [modal, setModal] = useState(false);
+  const [arePostsLoading, setArePostsLoading] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   useEffect(() => {
@@ -30,8 +31,12 @@ function App() {
   };
 
   async function fetchPosts() {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    setArePostsLoading(true);
+    setTimeout(async () => {
+      const posts = await PostService.getAll();
+      setPosts(posts);
+      setArePostsLoading(false);
+    }, 1000)
   }
 
   // Receiving post from child component
@@ -42,7 +47,7 @@ function App() {
 
   return (
     <div className="App">
-      <MyButton style={{marginTop: 30}} onClick={() => setModal(true)}>
+      <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Add Post
       </MyButton>
       <MyModal visible={modal} setVisible={setModal}>
@@ -53,7 +58,10 @@ function App() {
         filter={filter}
         setFilter={setFilter}
       />
-      <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Posts about JS" />
+      {arePostsLoading
+        ? <h1>Loading...</h1>
+        : <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Posts about JS" />
+      }
     </div>
   );
 }
