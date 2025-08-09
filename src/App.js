@@ -14,13 +14,18 @@ import { usePosts } from "./hooks/usePosts";
 import axios from "axios";
 import PostService from "./components/API/PostService";
 import Loader from "./components/UI/Loader/Loader";
+import { useFetching } from "./hooks/useFetching";
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [modal, setModal] = useState(false);
-  const [arePostsLoading, setArePostsLoading] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  
+  const [fetchPosts, arePostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -30,15 +35,6 @@ function App() {
     setPosts([...posts, newPost]);
     setModal(false);
   };
-
-  async function fetchPosts() {
-    setArePostsLoading(true);
-    setTimeout(async () => {
-      const posts = await PostService.getAll();
-      setPosts(posts);
-      setArePostsLoading(false);
-    }, 1000)
-  }
 
   // Receiving post from child component
   const removePost = (post) => {
@@ -59,6 +55,9 @@ function App() {
         filter={filter}
         setFilter={setFilter}
       />
+      {postError &&
+        <h1>Error occured ${postError}</h1>
+      }
       {arePostsLoading
         ? <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}><Loader /></div>
         : <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Posts about JS" />
