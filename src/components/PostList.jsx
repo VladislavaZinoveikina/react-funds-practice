@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import PostItem from "./PostItem";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
