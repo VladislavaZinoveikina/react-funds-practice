@@ -3,7 +3,7 @@ import React from "react";
 const About = () => {
     return (
         <h1>
-            This app is created
+            This app is created by Vladislava :)
         </h1>
     );
 };
